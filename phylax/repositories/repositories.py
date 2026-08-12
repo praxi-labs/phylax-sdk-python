@@ -29,6 +29,3 @@ class Repositories:
 
     def remove(self, repository_id: str) -> None:
         return self.api.delete(f"/v1/repositories/{quote(repository_id, safe='')}")
-
-    def verify(self, url: str) -> dict[str, Any]:
-        return self.api.post("/v1/repositories/verify", json={"url": url})

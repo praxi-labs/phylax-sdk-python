@@ -149,9 +149,6 @@ Track a repository. Passing `policy` binds it at registration, which is more rel
 
 ### `repositories.remove(repository_id)`
 
-### `repositories.verify(url)`
-
-Verify a repository without registering it first. This is the method to reach for when you are evaluating a dependency you do not own.
 
 ## Webhooks
 
