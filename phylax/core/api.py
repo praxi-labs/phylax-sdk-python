@@ -149,7 +149,9 @@ class API:
     def get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Any:
         return self.request("GET", path, params=params)
 
-    def post(self, path: str, json: Optional[Any] = None, params: Optional[Dict[str, Any]] = None) -> Any:
+    def post(
+        self, path: str, json: Optional[Any] = None, params: Optional[Dict[str, Any]] = None
+    ) -> Any:
         return self.request("POST", path, params=params, json=json)
 
     def patch(self, path: str, json: Optional[Any] = None) -> Any:

@@ -38,9 +38,9 @@ def verify_signature(
     body = raw_body.encode("utf-8") if isinstance(raw_body, str) else raw_body
     prefix = f"{int(ts)}.".encode("utf-8")
 
-    expected = "sha256=" + hmac.new(
-        secret.encode("utf-8"), prefix + body, hashlib.sha256
-    ).hexdigest()
+    expected = (
+        "sha256=" + hmac.new(secret.encode("utf-8"), prefix + body, hashlib.sha256).hexdigest()
+    )
 
     if not hmac.compare_digest(expected, signature):
         return SignatureResult(False, "Signature mismatch")

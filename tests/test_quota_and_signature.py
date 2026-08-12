@@ -6,7 +6,11 @@ import time
 from phylax import Phylax, verify_signature
 from phylax.quota import plan_at_least
 
-FREE = {"plan": "free", "permissions": ["artifacts:read", "artifacts:verify"], "quota_remaining": 100}
+FREE = {
+    "plan": "free",
+    "permissions": ["artifacts:read", "artifacts:verify"],
+    "quota_remaining": 100,
+}
 BUSINESS = {
     "plan": "business",
     "permissions": [
@@ -56,9 +60,12 @@ class TestPlans:
         assert check.requirement is None
 
     def test_total_cost_of_a_batch(self):
-        assert sdk().quota.total_quota_cost(
-            ["artifacts.verify", "policies.evaluate", "attestations.verify"]
-        ) == 5
+        assert (
+            sdk().quota.total_quota_cost(
+                ["artifacts.verify", "policies.evaluate", "attestations.verify"]
+            )
+            == 5
+        )
 
     def test_methods_for_plan_grow_with_the_plan(self):
         free_methods = sdk().quota.methods_for_plan("free")
@@ -78,9 +85,10 @@ TS = 1786240895
 
 
 def sign(ts, body, secret="whsec"):
-    return "sha256=" + hmac.new(
-        secret.encode(), f"{ts}.".encode() + body.encode(), hashlib.sha256
-    ).hexdigest()
+    return (
+        "sha256="
+        + hmac.new(secret.encode(), f"{ts}.".encode() + body.encode(), hashlib.sha256).hexdigest()
+    )
 
 
 class TestSignature:

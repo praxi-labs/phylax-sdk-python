@@ -37,8 +37,12 @@ class APITokenMissing(APIFailure):
 
 
 class APIAuthenticationError(APIFailure):
-    def __init__(self, message: str = "Token missing, malformed or revoked.", **kwargs: Any) -> None:
-        super().__init__(message, status=kwargs.pop("status", 401), code="unauthenticated", **kwargs)
+    def __init__(
+        self, message: str = "Token missing, malformed or revoked.", **kwargs: Any
+    ) -> None:
+        super().__init__(
+            message, status=kwargs.pop("status", 401), code="unauthenticated", **kwargs
+        )
 
 
 class APIAccessDenied(APIFailure):
@@ -63,7 +67,9 @@ class APIQuotaExceeded(APIFailure):
 
 
 class APIRateLimited(APIFailure):
-    def __init__(self, message: str = "Rate limited.", retry_after: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, message: str = "Rate limited.", retry_after: Optional[float] = None, **kwargs: Any
+    ) -> None:
         super().__init__(message, status=kwargs.pop("status", 429), code="rate_limited", **kwargs)
         self.retry_after = retry_after
 
@@ -75,7 +81,9 @@ class APIResourceNotFound(APIFailure):
 
 class APIInvalidRequest(APIFailure):
     def __init__(self, message: str = "Invalid request.", **kwargs: Any) -> None:
-        super().__init__(message, status=kwargs.pop("status", 400), code="invalid_request", **kwargs)
+        super().__init__(
+            message, status=kwargs.pop("status", 400), code="invalid_request", **kwargs
+        )
 
 
 class APIServerError(APIFailure):
@@ -103,7 +111,9 @@ STATUS_TO_EXCEPTION = {
 }
 
 
-def exception_for_status(status: int, message: str, payload: Optional[Dict[str, Any]] = None) -> APIFailure:
+def exception_for_status(
+    status: int, message: str, payload: Optional[Dict[str, Any]] = None
+) -> APIFailure:
     if status in STATUS_TO_EXCEPTION:
         return STATUS_TO_EXCEPTION[status](message, status=status, payload=payload)
     if status >= 500:
