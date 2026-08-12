@@ -63,10 +63,12 @@ The verdict is one of `ALLOW`, `WARN` or `BLOCK`. Treat anything you do not reco
 Verify a list in a single round trip. Prefer this over a loop: one call costs one unit of quota where a loop costs one per artifact, and it avoids serialising network latency across a dependency tree.
 
 ```python
-results = phylax.artifacts.verify_many([
-    "pkg:npm/express@4.18.2",
-    "pkg:pypi/requests@2.32.3",
-])
+results = phylax.artifacts.verify_many(
+    [
+        "pkg:npm/express@4.18.2",
+        "pkg:pypi/requests@2.32.3",
+    ]
+)
 ```
 
 Requires the team plan or above.

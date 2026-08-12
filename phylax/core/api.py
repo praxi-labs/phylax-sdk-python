@@ -1,6 +1,6 @@
 import random
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 
@@ -29,7 +29,7 @@ def is_retryable(method: str, status: int) -> bool:
     return status in RETRYABLE_UNSAFE
 
 
-def retry_delay(attempt: int, retry_after: Optional[str], rand: Any = random.random) -> float:
+def retry_delay(attempt: int, retry_after: str | None, rand: Any = random.random) -> float:
     if retry_after:
         try:
             return min(float(retry_after), MAX_BACKOFF_SECONDS)
@@ -39,7 +39,7 @@ def retry_delay(attempt: int, retry_after: Optional[str], rand: Any = random.ran
     return rand() * ceiling
 
 
-def redact(value: str, token: Optional[str]) -> str:
+def redact(value: str, token: str | None) -> str:
     if not token or len(token) < 8:
         return value
     return value.replace(token, "***")
@@ -52,8 +52,8 @@ class API:
         base_url: str = DEFAULT_BASE_URL,
         timeout: int = DEFAULT_TIMEOUT,
         max_retries: int = DEFAULT_MAX_RETRIES,
-        user_agent: Optional[str] = None,
-        session: Optional[requests.Session] = None,
+        user_agent: str | None = None,
+        session: requests.Session | None = None,
     ) -> None:
         self.api_token = api_token
         self.base_url = base_url.rstrip("/")
@@ -64,7 +64,7 @@ class API:
         agent = f"phylax-python/{__version__}"
         self.user_agent = f"{user_agent} {agent}" if user_agent else agent
 
-    def _headers(self, has_body: bool) -> Dict[str, str]:
+    def _headers(self, has_body: bool) -> dict[str, str]:
         headers = {
             "Accept": "application/json",
             "Authorization": f"Bearer {self.api_token}",
@@ -78,14 +78,14 @@ class API:
         self,
         method: str,
         path: str,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Any] = None,
+        params: dict[str, Any] | None = None,
+        json: Any | None = None,
     ) -> Any:
         url = f"{self.base_url}{path}"
         clean_params = {k: v for k, v in (params or {}).items() if v is not None}
         method = method.upper()
 
-        last_error: Optional[Exception] = None
+        last_error: Exception | None = None
 
         for attempt in range(self.max_retries):
             try:
@@ -132,7 +132,7 @@ class API:
 
     def _error_for(self, response: requests.Response, body: str) -> Exception:
         status = response.status_code
-        payload: Dict[str, Any] = {"body": body}
+        payload: dict[str, Any] = {"body": body}
 
         if status == 429:
             retry_after = response.headers.get("Retry-After")
@@ -146,15 +146,13 @@ class API:
 
         return exception_for_status(status, f"HTTP {status}. {body}".strip(), payload)
 
-    def get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Any:
+    def get(self, path: str, params: dict[str, Any] | None = None) -> Any:
         return self.request("GET", path, params=params)
 
-    def post(
-        self, path: str, json: Optional[Any] = None, params: Optional[Dict[str, Any]] = None
-    ) -> Any:
+    def post(self, path: str, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
         return self.request("POST", path, params=params, json=json)
 
-    def patch(self, path: str, json: Optional[Any] = None) -> Any:
+    def patch(self, path: str, json: Any | None = None) -> Any:
         return self.request("PATCH", path, json=json)
 
     def delete(self, path: str) -> Any:

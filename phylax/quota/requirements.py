@@ -1,8 +1,8 @@
-from typing import Any, Dict, List
+from typing import Any
 
-PLAN_ORDER: List[str] = ["free", "team", "business", "enterprise"]
+PLAN_ORDER: list[str] = ["free", "team", "business", "enterprise"]
 
-METHOD_REQUIREMENTS: Dict[str, Dict[str, Any]] = {
+METHOD_REQUIREMENTS: dict[str, dict[str, Any]] = {
     "artifacts.verify": {
         "quota_cost": 1,
         "permissions": ["artifacts:verify"],

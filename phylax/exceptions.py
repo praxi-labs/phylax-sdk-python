@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class PhylaxError(Exception):
@@ -7,7 +7,7 @@ class PhylaxError(Exception):
         message: str,
         status: int = 0,
         code: str = "error",
-        payload: Optional[Dict[str, Any]] = None,
+        payload: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
@@ -68,7 +68,7 @@ class APIQuotaExceeded(APIFailure):
 
 class APIRateLimited(APIFailure):
     def __init__(
-        self, message: str = "Rate limited.", retry_after: Optional[float] = None, **kwargs: Any
+        self, message: str = "Rate limited.", retry_after: float | None = None, **kwargs: Any
     ) -> None:
         super().__init__(message, status=kwargs.pop("status", 429), code="rate_limited", **kwargs)
         self.retry_after = retry_after
@@ -112,7 +112,7 @@ STATUS_TO_EXCEPTION = {
 
 
 def exception_for_status(
-    status: int, message: str, payload: Optional[Dict[str, Any]] = None
+    status: int, message: str, payload: dict[str, Any] | None = None
 ) -> APIFailure:
     if status in STATUS_TO_EXCEPTION:
         return STATUS_TO_EXCEPTION[status](message, status=status, payload=payload)

@@ -1,7 +1,7 @@
 import hashlib
 import hmac
 import time
-from typing import NamedTuple, Optional, Union
+from typing import NamedTuple
 
 
 class SignatureResult(NamedTuple):
@@ -10,12 +10,12 @@ class SignatureResult(NamedTuple):
 
 
 def verify_signature(
-    raw_body: Union[str, bytes],
-    signature: Optional[str],
-    timestamp: Optional[Union[str, int, float]],
+    raw_body: str | bytes,
+    signature: str | None,
+    timestamp: str | float | None,
     secret: str,
     tolerance_seconds: int = 300,
-    now: Optional[float] = None,
+    now: float | None = None,
 ) -> SignatureResult:
     if not signature:
         return SignatureResult(False, "Missing signature header")
@@ -36,7 +36,7 @@ def verify_signature(
         )
 
     body = raw_body.encode("utf-8") if isinstance(raw_body, str) else raw_body
-    prefix = f"{int(ts)}.".encode("utf-8")
+    prefix = f"{int(ts)}.".encode()
 
     expected = (
         "sha256=" + hmac.new(secret.encode("utf-8"), prefix + body, hashlib.sha256).hexdigest()

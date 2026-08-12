@@ -40,10 +40,12 @@ else:
 Verify a whole dependency list in one call:
 
 ```python
-results = phylax.artifacts.verify_many([
-    "pkg:npm/express@4.18.2",
-    "pkg:pypi/requests@2.32.3",
-])
+results = phylax.artifacts.verify_many(
+    [
+        "pkg:npm/express@4.18.2",
+        "pkg:pypi/requests@2.32.3",
+    ]
+)
 ```
 
 Evaluate against your organization policy:
