@@ -97,6 +97,15 @@ Pass the raw request bytes, not parsed JSON. Any middleware that reparses the pa
 
 </details>
 
+## Documentation
+
+| Guide | Covers |
+| --- | --- |
+| [API reference](docs/api.md) | Every resource and method, with arguments and plan requirements. |
+| [Exceptions and retries](docs/exceptions-and-retries.md) | The exception hierarchy, what is retried and why writes are treated differently. |
+| [Plans and quota](docs/plans-and-quota.md) | Checking entitlements before spending a call. |
+| [Webhooks](docs/webhooks.md) | Verifying inbound deliveries without opening a replay hole. |
+
 ## Exceptions
 
 Methods raise rather than return an error value, which is what Python callers expect. Every failure derives from `APIFailure`, so a single `except APIFailure` catches everything while specific handlers stay available.
