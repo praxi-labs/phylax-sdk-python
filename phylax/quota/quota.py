@@ -26,7 +26,7 @@ class Quota:
     def check_access(self, method: str, entitlements: dict[str, Any]) -> AccessCheck:
         requirement = METHOD_REQUIREMENTS.get(method)
         if requirement is None:
-            return AccessCheck(True, [], None)
+            return AccessCheck(False, [f"unknown method: {method}"], None)
 
         reasons: list[str] = []
         held = set(entitlements.get("permissions") or [])

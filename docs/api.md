@@ -71,15 +71,13 @@ results = phylax.artifacts.verify_many(
 )
 ```
 
-Requires the team plan or above.
-
 ### `artifacts.get(artifact)`
 
 The stored record for one artifact, including its most recent verification.
 
 ### `artifacts.list(ecosystem=None, limit=None, page=None)`
 
-Artifacts known to your account. Requires the team plan or above.
+Artifacts known to your account.
 
 ### `artifacts.search(query, ecosystem=None, limit=None)`
 
@@ -137,7 +135,7 @@ decision = phylax.policies.evaluate(
 
 Evaluation is the read only counterpart to `artifacts.verify`. Use it to preview the effect of a policy change before you publish it.
 
-Writes require the business plan or above. Read and evaluate require the team plan or above.
+Every policy method requires the marketplace plan or above. A policy is how a team enforces one decision across everyone, which is the marketplace boundary.
 
 ## Repositories
 
@@ -177,7 +175,7 @@ The generated secret is returned on creation and never again. Store it at that m
 
 ### `webhooks.delete(webhook_id)`
 
-Requires the business plan or above.
+A `builder` subscription may hold one webhook. Creating a second is refused by the server even though the method is available at that plan.
 
 ## Quota
 

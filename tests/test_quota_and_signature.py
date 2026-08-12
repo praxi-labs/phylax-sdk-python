@@ -4,15 +4,20 @@ import json
 import time
 
 from phylax import Phylax, verify_signature
-from phylax.quota import plan_at_least
+from phylax.quota import METHOD_REQUIREMENTS, is_paid_plan, plan_at_least
 
-FREE = {
-    "plan": "free",
+ANONYMOUS = {
+    "plan": "anonymous",
+    "permissions": [],
+    "quota_remaining": 0,
+}
+BUILDER = {
+    "plan": "builder",
     "permissions": ["artifacts:read", "artifacts:verify"],
     "quota_remaining": 100,
 }
-BUSINESS = {
-    "plan": "business",
+MARKETPLACE = {
+    "plan": "marketplace",
     "permissions": [
         "artifacts:read",
         "artifacts:verify",
@@ -32,32 +37,51 @@ def sdk():
 
 class TestPlans:
     def test_plan_ordering_is_cumulative(self):
-        assert plan_at_least("business", "team") is True
-        assert plan_at_least("free", "team") is False
-        assert plan_at_least("unknown", "free") is False
+        assert plan_at_least("marketplace", "builder") is True
+        assert plan_at_least("builder", "marketplace") is False
+        assert plan_at_least("anonymous", "builder") is False
+        assert plan_at_least("unknown", "builder") is False
 
-    def test_free_plan_allows_what_it_pays_for(self):
-        check = sdk().quota.check_access("artifacts.verify", FREE)
+    def test_anonymous_is_the_only_unpaid_plan(self):
+        assert is_paid_plan("anonymous") is False
+        assert is_paid_plan("builder") is True
+        assert is_paid_plan("marketplace") is True
+        assert is_paid_plan("enterprise") is True
+
+    def test_no_method_is_reachable_without_paying(self):
+        for method in METHOD_REQUIREMENTS:
+            check = sdk().quota.check_access(method, ANONYMOUS)
+            assert check.allowed is False, f"{method} is reachable on the anonymous plan"
+
+    def test_every_method_requires_a_paid_plan(self):
+        for method, requirement in METHOD_REQUIREMENTS.items():
+            assert is_paid_plan(requirement["minimum_plan"]), (
+                f"{method} declares the unpaid plan {requirement['minimum_plan']}"
+            )
+
+    def test_builder_allows_what_it_pays_for(self):
+        check = sdk().quota.check_access("artifacts.verify", BUILDER)
         assert check.allowed is True
         assert check.reasons == []
 
-    def test_free_plan_is_refused_a_business_method_with_reasons(self):
-        check = sdk().quota.check_access("webhooks.create", FREE)
+    def test_builder_is_refused_a_marketplace_method_with_reasons(self):
+        check = sdk().quota.check_access("policies.evaluate", BUILDER)
         assert check.allowed is False
         joined = " ".join(check.reasons)
-        assert "business plan or above" in joined
+        assert "marketplace plan or above" in joined
         assert "missing permissions" in joined
 
     def test_exhausted_quota_blocks_a_sufficient_plan(self):
-        entitlements = dict(BUSINESS, quota_remaining=1)
+        entitlements = dict(MARKETPLACE, quota_remaining=1)
         check = sdk().quota.check_access("policies.evaluate", entitlements)
         assert check.allowed is False
         assert "quota exhausted" in " ".join(check.reasons)
 
-    def test_ungated_method_passes_through(self):
-        check = sdk().quota.check_access("health", FREE)
-        assert check.allowed is True
+    def test_unknown_method_is_refused_rather_than_waved_through(self):
+        check = sdk().quota.check_access("health", MARKETPLACE)
+        assert check.allowed is False
         assert check.requirement is None
+        assert "unknown method" in " ".join(check.reasons)
 
     def test_total_cost_of_a_batch(self):
         assert (
@@ -68,12 +92,14 @@ class TestPlans:
         )
 
     def test_methods_for_plan_grow_with_the_plan(self):
-        free_methods = sdk().quota.methods_for_plan("free")
-        business_methods = sdk().quota.methods_for_plan("business")
-        assert "artifacts.verify" in free_methods
-        assert "webhooks.create" not in free_methods
-        assert "webhooks.create" in business_methods
-        assert len(business_methods) > len(free_methods)
+        anonymous_methods = sdk().quota.methods_for_plan("anonymous")
+        builder_methods = sdk().quota.methods_for_plan("builder")
+        marketplace_methods = sdk().quota.methods_for_plan("marketplace")
+        assert anonymous_methods == []
+        assert "artifacts.verify" in builder_methods
+        assert "policies.evaluate" not in builder_methods
+        assert "policies.evaluate" in marketplace_methods
+        assert len(marketplace_methods) > len(builder_methods)
 
     def test_reverse_permission_lookup(self):
         methods = sdk().quota.methods_requiring_permission("policies:write")
