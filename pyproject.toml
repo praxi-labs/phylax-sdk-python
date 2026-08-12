@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "phylax"
+dynamic = ["version"]
+requires-python = ">= 3.9"
+dependencies = [
+    "requests>=2.32.0,<3",
+    "typing-extensions>=4.12.2,<5",
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+description = "Python SDK for the Phylax API"
+keywords = ["phylax", "supply-chain", "attestation", "security", "sdk"]
+authors = [{ name = "Phylax" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Security",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://phyi.dev"
+Documentation = "https://build.phyi.dev/integrations/sdks/"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0", "responses>=0.25.0", "ruff>=0.3.0"]
+
+[tool.hatch.version]
+path = "phylax/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["phylax"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
