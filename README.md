@@ -1,14 +1,22 @@
-# phylax
+# phylax-sdk
 
 Python SDK for the [Phylax](https://phyi.dev) API. Package verification, policy evaluation, attestations, and plan aware quota handling.
 
-`phylax` is the canonical Python client for the Phylax API. It exists so any Python application, whether that is a build script, an agent runtime, or your own security service, can verify what your software depends on without hand rolling auth, retries, redaction and error handling.
+This is the canonical Python client for the Phylax API. It exists so any Python application, whether that is a build script, an agent runtime, or your own security service, can verify what your software depends on without hand rolling auth, retries, redaction and error handling.
 
 ## Install
 
 ```sh
-pip install phylax
+pip install phylax-sdk
 ```
+
+The distribution is `phylax-sdk` and the import is `phylax`:
+
+```python
+from phylax import Phylax
+```
+
+An unrelated project already holds the name `phylax` on PyPI, so `pip install phylax` installs something else entirely. Check the distribution name before you install.
 
 ## Usage
 
