@@ -95,6 +95,11 @@ METHOD_REQUIREMENTS: dict[str, dict[str, Any]] = {
         "permissions": ["repositories:write"],
         "minimum_plan": "builder",
     },
+    "repositories.verify": {
+        "quota_cost": 1,
+        "permissions": ["repositories:read"],
+        "minimum_plan": "builder",
+    },
     "webhooks.list": {
         "quota_cost": 1,
         "permissions": ["webhooks:read"],

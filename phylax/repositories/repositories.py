@@ -29,3 +29,22 @@ class Repositories:
 
     def remove(self, repository_id: str) -> None:
         return self.api.delete(f"/v1/repositories/{quote(repository_id, safe='')}")
+
+    def verify(
+        self,
+        files: dict[str, str],
+        url: str | None = None,
+        policy: str | None = None,
+    ) -> dict[str, Any]:
+        """Scan a repository by verifying every dependency its lockfiles install.
+
+        Pass the lockfile contents keyed by filename. Nothing about the
+        repository is fetched, so scanning a private repository never requires
+        giving Phylax a token for it.
+        """
+        body: dict[str, Any] = {"files": files}
+        if url:
+            body["url"] = url
+        if policy:
+            body["policy"] = policy
+        return self.api.post("/v1/repositories/verify", json=body)
