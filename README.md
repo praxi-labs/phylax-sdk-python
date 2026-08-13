@@ -1,5 +1,7 @@
 # phylax-sdk
 
+[![PyPI](https://img.shields.io/badge/PyPI-pending-informational)](https://github.com/praxi-labs/phylax-sdk-python/releases)
+
 Python SDK for the [Phylax](https://phyi.dev) API. Package verification, policy evaluation, attestations, and plan aware quota handling.
 
 This is the canonical Python client for the Phylax API. It exists so any Python application, whether that is a build script, an agent runtime, or your own security service, can verify what your software depends on without hand rolling auth, retries, redaction and error handling.
@@ -168,3 +170,17 @@ ruff check .
 ## License
 
 MIT
+
+## The rest of Phylax
+
+| Tool | Where to get it |
+| --- | --- |
+| JavaScript SDK | [`@phyi/sdk`](https://www.npmjs.com/package/@phyi/sdk) on npm |
+| Python SDK | [`phylax-sdk`](https://github.com/praxi-labs/phylax-sdk-python), PyPI release pending |
+| MCP server | [`@phyi/mcp`](https://www.npmjs.com/package/@phyi/mcp) on npm |
+| Agent runtime gate | [`@phyi/runtime-gate`](https://www.npmjs.com/package/@phyi/runtime-gate) on npm |
+| VS Code extension | [`phylax.phylax`](https://marketplace.visualstudio.com/items?itemName=phylax.phylax) on the Marketplace |
+| GitHub Action | [`praxi-labs/phylax-action`](https://github.com/praxi-labs/phylax-action) |
+| Browser extension | [`praxi-labs/phylax-chrome`](https://github.com/praxi-labs/phylax-chrome/releases/latest), Web Store listing pending |
+
+Docs live at [phyi.dev](https://phyi.dev).
