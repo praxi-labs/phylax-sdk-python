@@ -14,3 +14,14 @@ jobs:
       version-path: phylax/version.py
     permissions:
       contents: write
+
+  publish:
+    name: Publish
+    needs: tag
+    if: needs.tag.outputs.tagged == 'true'
+    uses: praxi-labs/ci/.github/workflows/pypi-publish.yml@v1
+    with:
+      version-path: phylax/version.py
+    permissions:
+      contents: read
+      id-token: write
