@@ -16,12 +16,45 @@ jobs:
       contents: write
 
   publish:
-    name: Publish
+    name: Publish to PyPI
     needs: tag
     if: needs.tag.outputs.tagged == 'true'
-    uses: praxi-labs/ci/.github/workflows/pypi-publish.yml@v1
-    with:
-      version-path: phylax/version.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
     permissions:
       contents: read
       id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v6.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip build twine
+
+      - name: Build
+        run: python -m build
+
+      - name: Check metadata
+        run: python -m twine check --strict dist/*
+
+      - name: Refuse to publish a version the tag does not describe
+        env:
+          EXPECTED: ${{ needs.tag.outputs.version }}
+        run: |
+          set -euo pipefail
+          built="$(ls dist/*.whl | head -n 1 | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+[^-]*)-py.*/\1/')"
+          if [ "$built" != "$EXPECTED" ]; then
+            echo "::error::built ${built} but the tag says ${EXPECTED}"
+            exit 1
+          fi
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          attestations: true
