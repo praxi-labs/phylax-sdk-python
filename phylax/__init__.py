@@ -24,6 +24,7 @@ from phylax.exceptions import (
 from phylax.policies import Policies
 from phylax.quota import Quota
 from phylax.repositories import Repositories
+from phylax.utils.collect import collect_files
 from phylax.utils.signature import SignatureResult, verify_signature
 from phylax.version import __version__
 from phylax.webhooks import Webhooks
@@ -45,6 +46,7 @@ __all__ = [
     "PhylaxError",
     "SignatureResult",
     "__version__",
+    "collect_files",
     "verify_signature",
 ]
 
