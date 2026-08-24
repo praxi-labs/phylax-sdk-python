@@ -152,6 +152,30 @@ class API:
     def post(self, path: str, json: Any | None = None, params: dict[str, Any] | None = None) -> Any:
         return self.request("POST", path, params=params, json=json)
 
+    def stream_lines(self, path: str, timeout: float | None = None):
+        """Yield each line of a newline-delimited response as it arrives.
+
+        `request` reads the whole body and parses it, which defeats a streaming
+        endpoint. This is the seam for NDJSON, where the point is to act on each
+        line rather than wait for the last one. Not retried: a half consumed
+        stream cannot be replayed.
+        """
+        url = f"{self.base_url}{path}"
+        headers = self._headers(False)
+        headers["Accept"] = "application/x-ndjson"
+        with self.session.get(
+            url, headers=headers, timeout=timeout or self.timeout, stream=True
+        ) as response:
+            if response.status_code >= 400:
+                raise exception_for_status(
+                    response.status_code,
+                    f"HTTP {response.status_code}. {response.text[:200]}".strip(),
+                    None,
+                )
+            for line in response.iter_lines(decode_unicode=True):
+                if line:
+                    yield line
+
     def patch(self, path: str, json: Any | None = None) -> Any:
         return self.request("PATCH", path, json=json)
 

@@ -4,6 +4,7 @@ from typing import Any
 import requests
 
 from phylax.artifacts import Artifacts
+from phylax.audit import Audit
 from phylax.attestations import Attestations
 from phylax.core.api import API, DEFAULT_BASE_URL, DEFAULT_MAX_RETRIES, DEFAULT_TIMEOUT
 from phylax.exceptions import (
@@ -25,6 +26,7 @@ from phylax.policies import Policies
 from phylax.quota import Quota
 from phylax.repositories import Repositories
 from phylax.utils.collect import collect_files
+from phylax.utils.manifests import collect_manifests
 from phylax.utils.signature import SignatureResult, verify_signature
 from phylax.version import __version__
 from phylax.webhooks import Webhooks
@@ -47,6 +49,7 @@ __all__ = [
     "SignatureResult",
     "__version__",
     "collect_files",
+    "collect_manifests",
     "verify_signature",
 ]
 
@@ -75,6 +78,7 @@ class Phylax:
         )
 
         self.artifacts = Artifacts(self.api)
+        self.audit = Audit(self.api)
         self.attestations = Attestations(self.api)
         self.policies = Policies(self.api)
         self.repositories = Repositories(self.api)
